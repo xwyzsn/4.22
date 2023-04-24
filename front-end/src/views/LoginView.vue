@@ -42,7 +42,14 @@ let Login = () => {
             ElMessage.success(res.data.msg)
             sessionStorage.setItem('info', JSON.stringify(res.data.data))
             infoStore.setInfo(res.data.data)
-            router.push({ name: 'sys' })
+            let role = res.data.data.role
+            console.log(role)
+            if (role == 'landlord') {
+                router.push({ name: 'landlord' })
+            }
+            else {
+                router.push({ name: 'sys' })
+            }
         } else {
             ElMessage.error(res.data.msg)
         }

@@ -5,8 +5,9 @@
                 <el-input v-model="props.house.houseName"></el-input>
             </el-form-item>
             <el-form-item label="图片">
-                <el-upload class="avatar-uploader" action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                    :show-file-list="true" :on-preview="handleOnPreview" :before-upload="beforeAvatarUpload">
+                <el-upload :ref="uploadImage" class="avatar-uploader" action="none" :on-preview="handleOnPreview"
+                    :auto-upload="false" :file-list="fileList" :on-change="onChange" :limit="1" :accept="'image/*'"
+                    :on-remove="onRemove">
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus />
@@ -42,7 +43,9 @@
                 <el-input v-model="props.house.description"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="handleAdd">提交</el-button>
+                <el-button v-if="props.mode === 'add'" type="primary" @click="handleAdd">提交</el-button>
+                <el-button v-else type="primary" @click="handleUpdate">确认修改</el-button>
+
             </el-form-item>
         </el-form>
     </div>
@@ -51,6 +54,10 @@
 <script setup>
 import { ref } from 'vue'
 import { addNewHouse } from '../api/house';
+import { useInfoStore } from '../stores/counter';
+let infoStore = useInfoStore()
+let info = infoStore.info
+let fileList = ref([])
 const props = defineProps({
     house: {
         type: Object,
@@ -66,9 +73,9 @@ const props = defineProps({
 let imageUrl = ref('')
 let handleOnPreview = (file) => {
     console.log('file', file)
-    imageUrl.value = file.url
 
 }
+let uploadImage = ref(null)
 let handleAdd = () => {
     let data = {
         houseName: props.house.houseName,
@@ -78,11 +85,34 @@ let handleAdd = () => {
         powerPrice: props.house.powerPrice,
         description: props.house.description,
         area: props.house.area,
-        
+        status: props.house.status,
+        landlordId: info.userId,
+        landlordPhone: info.tel,
+        landlordName: info.username,
+        pic: fileList.value[0].raw
     }
-    addNewHouse(props.house).then(res => {
+    let formData = new FormData()
+    for (let key in data) {
+        formData.append(key, data[key])
+    }
+
+
+    addNewHouse(formData).then(res => {
         console.log('res', res)
     })
+}
+let handleUpdate = () => {
+
+}
+let onChange = (file) => {
+    console.log('file', file)
+    fileList.value.push(file)
+    imageUrl.value = URL.createObjectURL(file.raw)
+}
+let onRemove = (file) => {
+    console.log('file', file)
+    fileList.value = []
+    imageUrl.value = ''
 }
 </script> 
  

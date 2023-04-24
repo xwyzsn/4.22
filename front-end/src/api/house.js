@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import { api } from "../boot/axios";
 
 export function getHouseList() {
@@ -13,5 +14,12 @@ export function deleteByHouseId(id) {
 }
 
 export function addNewHouse(params) {
-    return api.post('/house/addnewhouse', params)
+    return api({
+        url: "/house/addnew",
+        method: "post",
+        data: params,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+        }
+    })
 }

@@ -1,8 +1,10 @@
 package com.example.backend_422.records;
 
-public record HouseRecord(Integer houseId, String houseName,String address,
-                          String pic, String description, String status,
+import org.springframework.web.multipart.MultipartFile;
+
+public record HouseRecord(String houseName, String address,
+                          MultipartFile pic, String description, String status,
                           String rentPrice, String powerPrice, String waterPrice,
-                          String area, String landlordName, String landlordPhone) {
+                          String area, String landlordName, String landlordPhone,Integer landlordId) {
 
 }
