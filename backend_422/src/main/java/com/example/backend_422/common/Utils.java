@@ -14,11 +14,16 @@ public class Utils {
     public Date stringToDate(String date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try {
-            Date date1 = sdf.parse(date);
-            return date1;
+            return sdf.parse(date);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+    public Boolean CompareTwoDate(Date date1, Date date2){
+        return date1.getTime() > date2.getTime();
+    }
+    public Date getNowDate(){
+        return new Date();
     }
 
 }

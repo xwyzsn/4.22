@@ -61,4 +61,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         orderMapper.delete(wrapper);
         return Result.succ("success");
     }
+
+    public Result getByLandlordId(Integer landlordId) {
+        QueryWrapper<Order> wrapper = new QueryWrapper<>();
+        wrapper.eq("landlord_id",landlordId);
+        List<Order> orders = orderMapper.selectList(wrapper);
+        return Result.succ(orders);
+    }
+
+    public Result updateStatus(Integer orderId,String status) {
+        UpdateWrapper<Order> wrapper = new UpdateWrapper<>();
+        wrapper.eq("order_id",orderId);
+        wrapper.set("status",status);
+        orderMapper.update(null,wrapper);
+        return Result.succ("success");
+    }
 }

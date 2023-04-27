@@ -5,7 +5,7 @@
                 <el-button class=" m-auto mt-10" type="primary" @click="handleClick">预约看房</el-button>
             </div>
             <div>
-                <el-button class="m-auto mt-10" type="success">
+                <el-button class="m-auto mt-10" type="success" @click="orderModal = true">
                     租房确认
                 </el-button>
             </div>
@@ -73,6 +73,21 @@
                 <el-button type="primary" class="m-3" @click="confirmPick">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog v-model="orderModal" class="w-1/3" title="租房确认">
+            <el-form>
+                <el-form-item label="开始时间">
+                    <el-date-picker v-model="startTime" type="datetime" placeholder="选择开始时间" />
+                </el-form-item>
+                <el-form-item label="结束时间">
+                    <el-date-picker v-model="endTime" type="datetime" placeholder="选择结束时间" />
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="flex flex-row-reverse space-x-3 mr-3">
+                <el-button class="m-3" @click="orderModal = false">取 消</el-button>
+                <el-button type="primary" class="m-3" @click="handleConfirm">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
  
@@ -82,9 +97,11 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useInfoStore } from '../../stores/counter';
 import { preserveTime } from '../../api/order'
+import { addReservation } from '../../api/reservation'
 import dayjs from 'dayjs'
 const { query } = useRoute()
 const infoStore = useInfoStore()
+
 let info = infoStore.info
 let item = ref(query)
 let showModal = ref(false)
@@ -92,13 +109,16 @@ let showValue = ref({
     phone: '',
     time: ''
 })
+let orderModal = ref(false)
+let startTime = ref('')
+let endTime = ref('')
+
 let handleClick = () => {
     showModal.value = true
 }
 let goback = () => {
     window.history.go(-1)
 }
-console.log(info)
 let confirmPick = () => {
     if (showValue.value.phone === '' || showValue.value.time === '') {
         ElMessage.error('请填写完整信息')
@@ -127,6 +147,28 @@ let confirmPick = () => {
         }
     })
     showModal.value = false
+}
+
+let handleConfirm = () => {
+    let formData = new FormData()
+    formData.append('houseId', item.value.houseId)
+    formData.append('houseName', item.value.name)
+    formData.append('userId', info.userId)
+    formData.append('username', info.username)
+    formData.append('startTime', dayjs(startTime.value).format('YYYY-MM-DD HH:mm:ss'))
+    formData.append('endTime', dayjs(endTime.value).format('YYYY-MM-DD HH:mm:ss'))
+    formData.append('landlordId', item.value.landlordId)
+    formData.append('landlordName', item.value.landlordName)
+    addReservation(formData).then(res => {
+        if (res.data.code === 200) {
+            ElMessage.success('预约成功,请等待房东确认')
+            orderModal.value = false
+        }
+        else {
+            ElMessage.error(res.data.data)
+        }
+    })
+
 }
 
 

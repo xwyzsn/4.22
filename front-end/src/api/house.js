@@ -23,3 +23,14 @@ export function addNewHouse(params) {
         }
     })
 }
+
+export function updateHouse(params) {
+    return api({
+        url: "/house/update",
+        method: "post",
+        data: params,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+        }
+    })
+}

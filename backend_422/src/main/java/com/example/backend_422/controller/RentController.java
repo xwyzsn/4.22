@@ -28,4 +28,8 @@ public class RentController {
     public Result getRentByUserId(@RequestParam("userId") Integer userId){
         return rentService.getRentByUserId(userId);
     }
+    @GetMapping("getByLandlordId")
+    public Result getByLandlordId(@RequestParam("landlordId") Integer landlordId){
+        return rentService.getByLandlordId(landlordId);
+    }
 }

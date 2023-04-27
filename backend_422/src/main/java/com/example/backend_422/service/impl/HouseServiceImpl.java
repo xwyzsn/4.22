@@ -1,12 +1,14 @@
 package com.example.backend_422.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.backend_422.common.Result;
 import com.example.backend_422.entity.House;
 import com.example.backend_422.mapper.HouseMapper;
 import com.example.backend_422.records.HouseRecord;
 import com.example.backend_422.service.HouseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import freemarker.template.utility.ClassUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,11 +56,12 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
             String originalFilename = houseRecord.pic().getOriginalFilename();
             String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
             String newFilename = filename + suffix;
-            String path = "/Users/jan/Desktop/project-2/422/img/" + newFilename;
+            //get current pat
+            String path = this.getClass().getClassLoader().getResource("").getPath().toString()+"public/" + newFilename;
             File file = new File(path);
             try {
                 houseRecord.pic().transferTo(file);
-                house.setPic(newFilename);
+                house.setPic("http://localhost:8085/static/"+newFilename);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -97,6 +100,62 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
             house.setWaterPrice(BigDecimal.valueOf(Float.parseFloat(houseRecord.waterPrice())));
         }
         houseMapper.insert(house);
+        return Result.succ("null");
+    }
+
+    public Result updateHouse(Integer houseId, HouseRecord houseRecord) {
+        UpdateWrapper<House> wrapper = new UpdateWrapper<>();
+        wrapper.eq("house_id",houseId);
+        if(houseRecord.pic() != null){
+            UUID uuid = UUID.randomUUID();
+            String filename = uuid.toString().replaceAll("-","");
+            String originalFilename = houseRecord.pic().getOriginalFilename();
+            String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String newFilename = filename + suffix;
+
+            String path = this.getClass().getClassLoader().getResource("").getPath().toString()+"public/" + newFilename;
+            File file = new File(path);
+            try {
+                houseRecord.pic().transferTo(file);
+                wrapper.set("pic","http://localhost:8085/static/"+newFilename);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if(houseRecord.houseName() != null){
+            wrapper.set("name",houseRecord.houseName());
+        }
+        if(houseRecord.address() != null){
+            wrapper.set("address",houseRecord.address());
+        }
+        if(houseRecord.area() != null){
+            wrapper.set("area",Float.parseFloat(houseRecord.area()));
+        }
+        if(houseRecord.description() != null){
+            wrapper.set("description",houseRecord.description());
+        }
+        if(houseRecord.landlordId() != null){
+            wrapper.set("landlord_id",houseRecord.landlordId());
+        }
+        if(houseRecord.landlordName() != null){
+            wrapper.set("landlord_name",houseRecord.landlordName());
+        }
+        if(houseRecord.landlordPhone() != null){
+            wrapper.set("landlord_phone",houseRecord.landlordPhone());
+        }
+        if(houseRecord.powerPrice() != null){
+            wrapper.set("power_price",BigDecimal.valueOf(Float.parseFloat(houseRecord.powerPrice())));
+        }
+        if(houseRecord.rentPrice() != null){
+            wrapper.set("rent_price",BigDecimal.valueOf(Float.parseFloat(houseRecord.rentPrice())));
+        }
+        if(houseRecord.status() != null){
+            wrapper.set("status",houseRecord.status());
+        }
+        if(houseRecord.waterPrice() != null){
+            wrapper.set("water_price",BigDecimal.valueOf(Float.parseFloat(houseRecord.waterPrice())));
+        }
+        houseMapper.update(null,wrapper);
         return Result.succ("null");
     }
 }

@@ -47,8 +47,11 @@ let Login = () => {
             if (role == 'landlord') {
                 router.push({ name: 'landlord' })
             }
+            else if (role === 'admin') {
+                router.push({ name: 'admin' })
+            }
             else {
-                router.push({ name: 'sys' })
+                router.push({ name: 'IndexLayoutView' })
             }
         } else {
             ElMessage.error(res.data.msg)

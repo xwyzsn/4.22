@@ -2,7 +2,7 @@
     <div class="w-full h-full">
         <el-form label-width="100px">
             <el-form-item label="房屋名字">
-                <el-input v-model="props.house.houseName"></el-input>
+                <el-input :prefix-icon="HomeFilled" v-model="props.house.houseName"></el-input>
             </el-form-item>
             <el-form-item label="图片">
                 <el-upload :ref="uploadImage" class="avatar-uploader" action="none" :on-preview="handleOnPreview"
@@ -14,33 +14,36 @@
                     </el-icon>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="地址">
-                <el-input v-model="props.house.address"></el-input>
-            </el-form-item>
-            <el-form-item label="租赁价格">
-                <el-input v-model="props.house.rentPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="水费价格">
-                <el-input v-model="props.house.waterPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="电费价格">
-                <el-input v-model="props.house.powerPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="联系电话">
-                <el-input v-model="props.house.landlordPhone"></el-input>
-            </el-form-item>
+            <div class="grid grid-cols-2">
+                <el-form-item label="地址">
+                    <el-input v-model="props.house.address"></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话">
+                    <el-input v-model="props.house.landlordPhone" :prefix-icon="Phone">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="租赁价格">
+                    <el-input-number :prefix-icon="PriceTag" v-model="props.house.rentPrice"></el-input-number>
+                </el-form-item>
+                <el-form-item label="水费价格">
+                    <el-input-number :prefix-icon="PriceTag" v-model="props.house.waterPrice"></el-input-number>
+                </el-form-item>
+                <el-form-item label="电费价格">
+                    <el-input-number :prefix-icon="PriceTag" v-model="props.house.powerPrice"></el-input-number>
+                </el-form-item>
 
-            <el-form-item label="状态">
-                <el-select v-model="props.house.status" placeholder="请选择">
-                    <el-option label="空闲" value="空闲"></el-option>
-                    <el-option label="已租" value="已租"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="房屋面积">
-                <el-input v-model="props.house.area" type="textarea"></el-input>
-            </el-form-item>
+                <el-form-item label="房屋面积">
+                    <el-input-number v-model="props.house.area"></el-input-number>
+                </el-form-item>
+                <el-form-item label="状态">
+                    <el-select v-model="props.house.status" placeholder="请选择">
+                        <el-option label="空闲" value="空闲"></el-option>
+                        <el-option label="已租" value="已租"></el-option>
+                    </el-select>
+                </el-form-item>
+            </div>
             <el-form-item label="描述信息">
-                <el-input v-model="props.house.description"></el-input>
+                <el-input v-model="props.house.description" type="textarea"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button v-if="props.mode === 'add'" type="primary" @click="handleAdd">提交</el-button>
@@ -53,8 +56,11 @@
  
 <script setup>
 import { ref } from 'vue'
-import { addNewHouse } from '../api/house';
+import { addNewHouse, updateHouse } from '../api/house';
 import { useInfoStore } from '../stores/counter';
+import { ElMessage } from 'element-plus';
+import { Phone, PriceTag, HomeFilled } from '@element-plus/icons-vue'
+
 let infoStore = useInfoStore()
 let info = infoStore.info
 let fileList = ref([])
@@ -68,9 +74,18 @@ const props = defineProps({
     mode: {
         type: String,
         default: 'add'
+    },
+    showModal: {
+        type: Boolean
     }
 })
+const emit = defineEmits(['ChangeshowModal'])
+
+
 let imageUrl = ref('')
+if (props.house.pic) {
+    imageUrl.value = props.house.pic
+}
 let handleOnPreview = (file) => {
     console.log('file', file)
 
@@ -85,7 +100,7 @@ let handleAdd = () => {
         powerPrice: props.house.powerPrice,
         description: props.house.description,
         area: props.house.area,
-        status: props.house.status,
+        status: '待审核',
         landlordId: info.userId,
         landlordPhone: info.tel,
         landlordName: info.username,
@@ -98,10 +113,39 @@ let handleAdd = () => {
 
 
     addNewHouse(formData).then(res => {
-        console.log('res', res)
+        if (res.data.code === 200) {
+            ElMessage.success('添加成功')
+            emit('ChangeshowModal', false)
+
+        }
     })
 }
 let handleUpdate = () => {
+    let data = {
+        houseName: props.house.houseName,
+        address: props.house.address,
+        rentPrice: props.house.rentPrice,
+        waterPrice: props.house.waterPrice,
+        powerPrice: props.house.powerPrice,
+        description: props.house.description,
+        area: props.house.area,
+        status: props.house.status,
+        landlordId: info.userId,
+        landlordPhone: info.tel,
+        landlordName: info.username,
+        pic: fileList.value[0]?.raw ? fileList.value[0].raw : null
+    }
+    let formData = new FormData()
+    for (let key in data) {
+        formData.append(key, data[key])
+    }
+    formData.append('houseId', props.house.houseId)
+    updateHouse(formData).then(res => {
+        if (res.data.code === 200) {
+            ElMessage.success('修改成功')
+            emit('ChangeshowModal', false)
+        }
+    })
 
 }
 let onChange = (file) => {

@@ -60,5 +60,22 @@ public class HouseController {
         return houseService.addNewHouse(new HouseRecord(houseName,address,pic,description,status,rentPrice,powerPrice,waterPrice,area,landlordName,landlordPhone,landlordId));
     }
 
+    @PostMapping("update")
+    public Result updateHouse(@RequestParam(value = "houseId",required = false) Integer houseId,
+                              @RequestParam(value = "houseName",required = false) String houseName,
+                              @RequestParam(value = "address",required = false) String address,
+                              @RequestParam(value = "pic",required = false) MultipartFile pic,
+                              @RequestParam(value = "description",required = false) String description,
+                              @RequestParam(value = "status",required = false) String status,
+                              @RequestParam(value = "rentPrice",required = false) String rentPrice,
+                              @RequestParam(value = "powerPrice",required = false) String powerPrice,
+                              @RequestParam(value = "waterPrice",required = false) String waterPrice,
+                              @RequestParam(value = "area",required = false) String area,
+                              @RequestParam(value = "landlordName",required = false) String landlordName,
+                              @RequestParam(value = "landlordPhone",required = false) String landlordPhone,
+                              @RequestParam(value = "landlordId",required = false) Integer landlordId){
+        return houseService.updateHouse(houseId,new HouseRecord(houseName,address,pic,description,status,rentPrice,powerPrice,waterPrice,area,landlordName,landlordPhone,landlordId));
+    }
+
 
 }

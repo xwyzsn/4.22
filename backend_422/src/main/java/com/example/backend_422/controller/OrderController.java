@@ -40,5 +40,15 @@ public class OrderController {
         return orderService.cancelByOrderId(orderId);
     }
 
+    @GetMapping("getByLandlordId")
+    public Result getByLandlordId(@RequestParam("landlordId") Integer landlordId){
+        return orderService.getByLandlordId(landlordId);
+    }
+
+    @PutMapping("updateStatus")
+    public Result updateStatus(@RequestParam("orderId") Integer orderId,
+                               @RequestParam("status") String status){
+        return orderService.updateStatus(orderId,status);
+    }
 
 }

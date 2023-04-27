@@ -28,4 +28,10 @@ public class RentServiceImpl extends ServiceImpl<RentMapper, Rent> implements Re
         return Result.succ(rentMapper.selectList(wrapper));
 
     }
+
+    public Result getByLandlordId(Integer landlordId) {
+        QueryWrapper<Rent> wrapper = new QueryWrapper<>();
+        wrapper.eq("landlord_id",landlordId);
+        return Result.succ(rentMapper.selectList(wrapper));
+    }
 }

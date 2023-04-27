@@ -22,3 +22,10 @@ export function cancelPreservation(id) {
     })
 
 }
+
+export function getOrderByLandlordId(id) {
+    return api({
+        url: '/order/getByLandlordId?landlordId=' + id,
+        method: 'get'
+    })
+}

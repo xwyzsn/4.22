@@ -2,6 +2,8 @@ package com.example.backend_422.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
@@ -24,12 +26,14 @@ public class Maintainance implements Serializable {
     @TableId(value = "maintainance_id", type = IdType.AUTO)
     private Integer maintainanceId;
 
+    @TableField(value = "`desc`")
     private String desc;
 
     private Date reportTime;
 
     private Date finishTime;
 
+    @TableField(value = "`status`")
     private String status;
 
     private Integer userId;

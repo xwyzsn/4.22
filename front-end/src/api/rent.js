@@ -8,3 +8,11 @@ export function getRentByUserId(id) {
         method: 'get'
     })
 }
+
+export function getRentByLandlordId(id) {
+    return api({
+        url: '/rent/getByLandlordId?landlordId=' + id,
+        method: 'get'
+    })
+
+}

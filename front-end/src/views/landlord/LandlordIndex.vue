@@ -40,17 +40,36 @@
             </el-table-column>
         </el-table>
         <el-dialog v-model="showModal">
-            <HouseConfig :house="newHouse" />
+            <HouseConfig :showModal="showModal" @ChangeshowModal="(val) => { showModal = val }" :house="newHouse" />
+        </el-dialog>
+        <el-dialog v-model="editModal">
+            <HouseConfig :showModal="editModal" @ChangeshowModal="(val) => { editModal = val }" :house="editHouse"
+                mode="edit" />
         </el-dialog>
     </div>
 </template>
  
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { getHouseByLandlordId, deleteByHouseId } from '../../api/house';
 import { useInfoStore } from '../../stores/counter';
 import HouseConfig from '../../components/HouseConfig.vue';
+import { ElMessage } from 'element-plus';
 let showModal = ref(false)
+let editModal = ref(false)
+let editHouse = ref({
+    name: '',
+    houseName: '',
+    pic: '',
+    address: '',
+    rentPrice: '',
+    waterPrice: '',
+    powerPrice: '',
+    landlordPhone: '',
+    description: '',
+    area: '',
+    status: ''
+})
 let newHouse = ref({
     name: '',
     pic: '',
@@ -69,6 +88,25 @@ let houseList = ref([])
 let gethouse = getHouseByLandlordId(info.userId).then(res => {
     houseList.value = res.data.data
 })
+let handleEdit = (row) => {
+    editHouse.value = row
+    editHouse.value.houseName = row.name
+    editModal.value = true
+}
+watch(editModal, (val) => {
+    if (!val) {
+        getHouseByLandlordId(info.userId).then(res => {
+            houseList.value = res.data.data
+        })
+    }
+})
+watch(showModal, (val) => {
+    if (!val) {
+        getHouseByLandlordId(info.userId).then(res => {
+            houseList.value = res.data.data
+        })
+    }
+})
 
 let handleDelete = (row) => {
     let houseId = row.houseId
@@ -77,6 +115,7 @@ let handleDelete = (row) => {
             getHouseByLandlordId(info.userId).then(res => {
                 houseList.value = res.data.data
             })
+            ElMessage.success('删除成功')
         }
     })
 }
