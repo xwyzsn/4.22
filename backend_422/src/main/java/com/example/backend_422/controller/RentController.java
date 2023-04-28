@@ -32,4 +32,20 @@ public class RentController {
     public Result getByLandlordId(@RequestParam("landlordId") Integer landlordId){
         return rentService.getByLandlordId(landlordId);
     }
-}
+    @PostMapping("setStatus")
+    public Result setRentStatus(@RequestParam("houseId") Integer houseId,@RequestParam("status") String status,
+                                @RequestParam("rentId") Integer rentId){
+        return rentService.setRentStatus(houseId,status,rentId);
+    }
+
+    @GetMapping("getquit")
+    public Result getQuitOrder(@RequestParam("landlordId") Integer landlordId){
+        return rentService.getQuitOrder(landlordId);
+    }
+
+    @PostMapping("confirmQuit")
+    public Result confirmQuit(@RequestParam("status") String status,
+                              @RequestParam("rentId") Integer rentId,@RequestParam("endTime") String endTime,
+                              @RequestParam(value = "houseId",required = false) Integer houseId){
+        return rentService.confirmQuit(endTime,status,rentId,houseId);
+}}

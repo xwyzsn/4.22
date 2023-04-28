@@ -6,7 +6,7 @@
             <el-table-column prop="houseName" label="房屋名"></el-table-column>
             <el-table-column label="状态">
                 <template #default="scope">
-                    <el-tag type="success" v-if="scope.row.status === '未确认'">{{ scope.row.status }}</el-tag>
+                    <el-tag type="success" v-if="scope.row.status === '待确认'">{{ scope.row.status }}</el-tag>
                     <el-tag type="warning" v-else>{{ scope.row.status }}</el-tag>
                 </template>
             </el-table-column>
@@ -15,7 +15,7 @@
             <el-table-column prop="address" label="地址"></el-table-column>
             <el-table-column label="操作">
                 <template #default="scope">
-                    <div class="flex" v-if="scope.row.status === '未确认'">
+                    <div class="flex" v-if="scope.row.status === '待确认'">
                         <el-button type="primary" @click="handleConfirm(scope.row)">
                             <el-icon>
                                 <Check />

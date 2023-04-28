@@ -2,19 +2,21 @@
     <div class="w-full h-full flex items-center justify-center">
         <div class="border space-y-5">
             <div class="text-2xl flex justify-center">
-                Login
+                登陆页面
             </div>
-            <el-form label-width="100">
-                <el-form-item label="Username">
-                    <el-input v-model="username" placeholder="Username"></el-input>
+            <el-form label-width="100" style="width:400px;height: 100px;">
+                <el-form-item label="用户名">
+                    <el-input v-model="username" placeholder="请输入用户名"></el-input>
                 </el-form-item>
-                <el-form-item label="Password">
-                    <el-input v-model="password" placeholder="Password"></el-input>
+                <el-form-item label="密码">
+                    <el-input v-model="password" placeholder="请输入密码"></el-input>
                 </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="Login">Login</el-button>
-                </el-form-item>
+
             </el-form>
+            <div class="flex w-full justify-around">
+                <el-button type="primary" @click="Login">登陆</el-button>
+                <el-button @click="Reset">重置</el-button>
+            </div>
         </div>
     </div>
 </template>
@@ -57,6 +59,10 @@ let Login = () => {
             ElMessage.error(res.data.msg)
         }
     })
+}
+let Reset = () => {
+    username.value = ''
+    password.value = ''
 }
 
 </script>

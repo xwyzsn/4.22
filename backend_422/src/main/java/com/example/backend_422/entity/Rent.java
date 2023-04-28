@@ -40,5 +40,7 @@ public class Rent implements Serializable {
 
     private String landlordName;
 
+    private String status;
+
 
 }

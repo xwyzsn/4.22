@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.backend_422.common.Result;
 import com.example.backend_422.common.Utils;
+import com.example.backend_422.entity.House;
 import com.example.backend_422.entity.Rent;
 import com.example.backend_422.entity.Reservation;
+import com.example.backend_422.mapper.HouseMapper;
 import com.example.backend_422.mapper.RentMapper;
 import com.example.backend_422.mapper.ReservationMapper;
 import com.example.backend_422.service.ReservationService;
@@ -36,6 +38,8 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         wrapper.eq("user_id",userId);
         return Result.succ(reservationMapper.selectList(wrapper));
     }
+    @Autowired
+    private HouseMapper houseMapper;
 
     public Result confirmReservation(Integer id, String status,Integer houseId){
         if(status.equals("已拒绝")){
@@ -73,6 +77,9 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationMapper, Reser
         rent.setUsername(reservation.getUsername());
         rent.setLandlordName(reservation.getLandlordName());
         rentMapper.insert(rent);
+        UpdateWrapper<House> houseUpdateWrapper = new UpdateWrapper<>();
+        houseUpdateWrapper.eq("house_id",houseId);
+        houseUpdateWrapper.set("status","已租");
         return Result.succ(reservationMapper.update(null,wrapper));
     }
 

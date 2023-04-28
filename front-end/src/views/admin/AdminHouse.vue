@@ -74,7 +74,7 @@ let handleConfirm = (row) => {
         houseId: row.houseId,
         status: '未租'
     }
-    if (row.status !== '未审核') {
+    if (row.status !== '待审核') {
         ElMessage({
             message: '该房屋已审核',
             type: 'warning'

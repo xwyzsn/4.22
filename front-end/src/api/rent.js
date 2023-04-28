@@ -16,3 +16,26 @@ export function getRentByLandlordId(id) {
     })
 
 }
+
+export function setRentStatus(data) {
+    return api({
+        url: '/rent/setStatus',
+        method: 'post',
+        data: data
+    })
+}
+export function getQuitOrder(landlordId) {
+    return api({
+        url: '/rent/getquit?landlordId=' + landlordId,
+        method: 'get'
+
+    })
+}
+export function confirmQuit(params) {
+    return api({
+        url: '/rent/confirmQuit',
+        method: 'post',
+        data: params
+    })
+
+}

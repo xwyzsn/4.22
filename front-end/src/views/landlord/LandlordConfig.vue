@@ -52,14 +52,18 @@ getRentByLandlordId(info.userId).then(res => {
     let today = dayjs().format('YYYY-MM-DD')
     orders.value.forEach(item => {
         let end = dayjs(item.endTime).format('YYYY-MM-DD')
+        if (item.status === '已结束') {
+            history.value.push(item)
+        } else {
+            activate.value.push(item)
+        }
         if (end < today) {
             item.progress = 100
-            history.value.push(item)
         } else {
             let total = dayjs(item.endTime).diff(dayjs(item.startTime), 'day')
             let progress = dayjs().diff(dayjs(item.startTime), 'day')
             item.progress = (progress / total * 100).toFixed(2)
-            activate.value.push(item)
+            // activate.value.push(item)
         }
     })
 })

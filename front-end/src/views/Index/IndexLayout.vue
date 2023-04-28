@@ -55,9 +55,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
-import { useRoute } from 'vue-router'
 import { ElNotification } from 'element-plus'
-import { useRouter,useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
 const isDark = useDark()

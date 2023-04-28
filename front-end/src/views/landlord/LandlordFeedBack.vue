@@ -34,11 +34,11 @@
                         </el-descriptions-item>
                         <el-descriptions-item label="房间名">{{ item.houseName }}</el-descriptions-item>
                     </el-descriptions>
-                    <div class="m-4 flex flex-row-reverse">
+                    <!-- <div class="m-4 flex flex-row-reverse">
                         <el-button v-if="item.status === '未修复'" type="primary" size="30">
                             已维修
                         </el-button>
-                    </div>
+                    </div> -->
                 </div>
             </el-collapse-item>
         </el-collapse>

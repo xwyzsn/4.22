@@ -30,6 +30,10 @@ let getrent = getRentByUserId(info.userId).then(res => {
         let now = dayjs().format('YYYY-MM-DD')
         let dayRemain = dayjs(item.endTime).diff(now, 'day')
         let dayTotal = dayjs(item.endTime).diff(item.startTime, 'day')
+        if (dayjs(item.startTime).isAfter(now)) {
+            item.dayPass = 0
+            return
+        }
         item.dayPass = dayTotal - dayRemain;
     })
 })
@@ -38,9 +42,10 @@ let gethouse = getHouseList().then(res => {
     houseList.value = res.data.data
 })
 let done = Promise.all([getrent, gethouse]).then(() => {
+    console.log(rentList.value, houseList.value)
     rentList.value.map(item => {
         let house = houseList.value.find(house => house.houseId == item.houseId)
-        item.money = house.rentPrice * item.dayPass
+        item.money = house?.rentPrice * item.dayPass
     })
 })
 done.then(() => {

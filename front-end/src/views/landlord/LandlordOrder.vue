@@ -58,17 +58,40 @@
                 </el-table>
             </el-collapse-item>
 
+            <el-collapse-item title="退租申请">
+                <el-table :data="quitOrder">
+                    <el-table-column prop="username" label="用户名"></el-table-column>
+                    <el-table-column prop="houseName" label="房屋名"></el-table-column>
+                    <el-table-column prop="startTime" label="合同开始时间"></el-table-column>
+                    <el-table-column prop="endTime" label="合同结束时间"></el-table-column>
+                    <el-table-column label="状态">
+                        <template #default="scope">
+                            <el-tag type="warning">{{ scope.row.status }}</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template #default="scope">
+                            <div class="flex">
+                                <el-button type="primary" @click="handleQuitConfirm(scope.row)">确认</el-button>
+                                <el-button type="danger" @click="handleQuitReject(scope.row)">拒绝</el-button>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-collapse-item>
+
         </el-collapse>
     </div>
 </template>
  
 <script setup>
 import { ref } from 'vue'
-import { getRentByLandlordId } from '../../api/rent';
+import { getRentByLandlordId, getQuitOrder, confirmQuit } from '../../api/rent';
 import { useInfoStore } from '../../stores/counter';
 import { getReservationByLandlordId, confirmReservation } from '../../api/reservation';
-import { ElMessage } from 'element-plus';
+import { ElMessage, autocompleteEmits } from 'element-plus';
 import dayjs from 'dayjs';
+import { api } from '../../boot/axios';
 let infoStore = useInfoStore()
 let info = infoStore.info
 let activateName = ref('1')
@@ -76,6 +99,7 @@ let orders = ref([])
 let history = ref([])
 let activate = ref([])
 let reservations = ref([])
+let quitOrder = ref([])
 getReservationByLandlordId(info.userId).then(res => {
     reservations.value = res.data.data
 })
@@ -84,17 +108,54 @@ getRentByLandlordId(info.userId).then(res => {
     let today = dayjs().format('YYYY-MM-DD')
     orders.value.forEach(item => {
         let end = dayjs(item.endTime).format('YYYY-MM-DD')
+        if (item.status === '已结束') {
+            history.value.push(item)
+        } else {
+            activate.value.push(item)
+        }
         if (end < today) {
             item.progress = 100
-            history.value.push(item)
         } else {
             let total = dayjs(item.endTime).diff(dayjs(item.startTime), 'day')
             let progress = dayjs().diff(dayjs(item.startTime), 'day')
             item.progress = (progress / total * 100).toFixed(2)
-            activate.value.push(item)
+            // activate.value.push(item)
         }
     })
 })
+getQuitOrder(info.userId).then(res => {
+    quitOrder.value = res.data.data
+})
+let handleQuitConfirm = (row) => {
+    let status = '已结束'
+    let formData = new FormData()
+    formData.append('rentId', row.rentId)
+    formData.append('status', status)
+    formData.append('houseId', row.houseId)
+    formData.append('endTime', dayjs().format('YYYY-MM-DD HH:mm:ss'))
+    confirmQuit(formData).then(res => {
+        if (res.data.code === 200) {
+            ElMessage.success('确认成功')
+        } else {
+            ElMessage.error('确认失败')
+        }
+    })
+}
+let handleQuitReject = (row) => {
+    let status = '进行中'
+    let formData = new FormData()
+    formData.append('rentId', row.rentId)
+    formData.append('status', status)
+    formData.append('endTime', row.endTime)
+    confirmQuit(formData).then(res => {
+        if (res.data.code === 200) {
+            ElMessage.success('拒绝退租成功')
+        } else {
+            ElMessage.error('拒绝退租失败')
+        }
+    })
+}
+
 let handleConfirm = (row) => {
     let id = row.id
     let status = '已确认'
